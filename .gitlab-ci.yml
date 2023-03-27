@@ -1,0 +1,20 @@
+stages:
+  - deploy_container
+
+image: quay.io/containers/buildah:latest
+
+before_script:
+- echo "---------"
+- buildah version
+- echo "project name ${CI_PROJECT_NAME} registry_name ${CI_REGISTRY_IMAGE}"
+
+
+build_image:
+  stage: deploy_container
+  script:
+    - buildah --storage-driver=vfs bud -f Dockerfile -t ${CI_REGISTRY_IMAGE} .
+    - buildah --storage-driver=vfs images
+    - export REGISTRY_AUTH_FILE=${HOME}/auth.json
+    - echo "${CI_REGISTRY_PASSWORD}" | buildah --tls-verify=false login -u "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - buildah --storage-driver=vfs push ${CI_REGISTRY_IMAGE}
+
