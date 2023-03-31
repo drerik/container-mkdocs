@@ -2,6 +2,9 @@
 
 Alpine based container with mkdocs
 
+In addition, this container contains the following:
+- mkdocs-material
+
 ## Build container
 
 ```bash
